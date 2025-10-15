@@ -5,7 +5,9 @@ on:
     branches:
       - master
     paths:
+      - resume_spanish.tex
       - resume.tex
+      - web/template_spanish.html
       - web/template.html
 
 permissions:
@@ -25,8 +27,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y pandoc
 
+      - name: Install TeX Live
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended latexmk
+
       - name: Convert LaTeX to HTML
         run: pandoc -s resume.tex --template web/template.html -o web/index.html
+
+      - name: Convert Spanish LaTeX to HTML
+        run: |
+          mkdir -p web/spanish
+          pandoc -s resume-spanish.tex --template web/template_spanish.html -o web/spanish/index.html
+
+      - name: Build PDFs from LaTeX
+        run: |
+          latexmk -pdf -interaction=nonstopmode resume.tex
+          latexmk -pdf -interaction=nonstopmode resume-spanish.tex
+          # Ensure PDFs are at repo root: resume.pdf and resume-spanish.pdf
+          ls -la
+
+      - name: Prepare and include PDFs in site
+        run: |
+          mkdir -p web/resumes
+          cp -f resume.pdf web/resumes/resume.pdf
+          cp -f resume-spanish.pdf web/resumes/resume_spanish.pdf
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
