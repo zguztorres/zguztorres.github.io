@@ -55,6 +55,19 @@ jobs:
           cp -f resume.pdf web/resumes/resume.pdf
           cp -f resume-spanish.pdf web/resumes/resume_spanish.pdf
 
+      - name: Publish built site to master root
+        run: |
+          mkdir -p spanish resumes
+          cp -f web/index.html index.html
+          cp -f web/spanish/index.html spanish/index.html
+          cp -f web/resumes/resume.pdf resumes/resume.pdf
+          cp -f web/resumes/resume_spanish.pdf resumes/resume_spanish.pdf
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f index.html spanish/index.html resumes/resume.pdf resumes/resume_spanish.pdf
+          git diff --cached --quiet || git commit -m "Build GitHub Pages site"
+          git push
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
