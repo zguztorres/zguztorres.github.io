@@ -1,14 +1,16 @@
 name: Publish Resume to GH Pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
     paths:
-      - resume_spanish.tex
+      - resume-spanish.tex
       - resume.tex
       - web/template_spanish.html
       - web/template.html
+      - .github/workflows/publish_pages.yml
 
 permissions:
   contents: write
